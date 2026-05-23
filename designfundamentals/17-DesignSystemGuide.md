@@ -1,64 +1,43 @@
 # 17-DesignSystemGuide.md
 
-Version: 1.0
-Status: Frozen
+Version: 2.0
+Status: Active
 
 ---
 
 # Purpose
 
-This document serves as the primary design-generation guide for Mimo.
+This document is the primary design-generation brief for Mimo.
 
-It is intended to be consumed by:
+Use this document to generate:
 
-- Claude Design
-- AI design agents
-- Product Designers
-- Frontend Engineers
+- design system foundations
+- screen layouts
+- component variants
+- interaction states
+- high-fidelity mobile designs
 
-This document should be sufficient to generate the foundational design system and screen designs even without access to the remainder of the repository.
-
-It defines:
-
-- product context
-- visual philosophy
-- interaction philosophy
-- component inventory
-- component intent
-- component usage rules
-- accessibility expectations
-- responsive expectations
-
-This document intentionally does not define:
-
-- exact color values
-- design tokens
-- implementation code
-- React architecture
+This document should take precedence over design creativity when conflicts arise.
 
 ---
 
-# Mimo Overview
+# Product Summary
 
-Mimo is a personal memory layer for internet discoveries.
+Mimo is a mobile-first application for saving and retrieving internet discoveries.
 
 Users save:
 
-- links
 - articles
-- products
 - videos
+- products
 - recommendations
-- destinations
+- links
+- places
 - ideas
 
-that may become useful later.
+The primary goal is retrieval.
 
-The product exists to help users reconnect with valuable information when it becomes relevant again.
-
-Retrieval is the primary value.
-
-Storage supports retrieval.
+Users should be able to find information later even when they do not remember exact titles, URLs or where the information was stored.
 
 The interface should prioritize:
 
@@ -80,192 +59,429 @@ Relationships
 
 Actions
 
-Users should feel confident that information remains recoverable even when details have been forgotten.
+The product should feel like a personal memory companion rather than a productivity tool.
 
 ---
 
-# Design System Foundation
+# Technology Constraint
 
-Mimo must use Material UI (MUI) as the foundational component library.
+## Component Library
 
-Use existing MUI components whenever appropriate.
+Use Material UI (MUI) as the foundational component library.
 
 Prefer:
 
+- existing MUI components
 - composition
 - extension
-- customization
 
-over creating entirely new primitives.
+Avoid creating new primitives unless necessary.
 
-Custom components should only be introduced when:
-
-- the interaction pattern does not exist within MUI
-- retrieval workflows require specialized behavior
-- Memory Card experiences cannot be represented using existing MUI primitives
-
-The design system should establish a unique Mimo identity through:
-
-- hierarchy
-- spacing
-- content presentation
-- interaction behavior
-- visual tone
-
-Avoid replacing MUI components purely for stylistic reasons.
-
-Prioritize:
-
-- consistency
-- accessibility
-- maintainability
-- implementation speed
-
----
-
-# Experience Attributes
-
-The interface should feel:
-
-- calm
-- trustworthy
-- lightweight
-- personal
-- focused
-- supportive
-
-Avoid:
-
-- playful
-- noisy
-- gamified
-- attention-seeking
-- enterprise-heavy
-- overly technical
-
-The interface should feel like a memory companion rather than a productivity platform.
-
----
-
-# Design Principles
-
-## Recognition Before Recall
-
-Show clues before requiring memory.
-
-Prioritize:
-
-- imagery
-- source cues
-- context cues
-
-over metadata-heavy interfaces.
-
----
-
-## Meaning Before Action
-
-Users should understand why information matters before being presented with actions.
-
----
-
-## Progressive Disclosure
-
-Reveal complexity gradually.
-
-Start simple.
-
-Expand only when needed.
-
----
-
-## Calm Assistance
-
-Support users quietly.
-
-Never compete for attention.
-
----
-
-## Relationships Over Hierarchies
-
-Connections between memories are more important than folder structures.
-
----
-
-## Low Organizational Burden
-
-The interface should not require ongoing maintenance from users.
+Create custom components only when required for Memory Card experiences.
 
 ---
 
 # Visual Direction
 
-## Prefer
+## Design References
 
-- soft surfaces
-- generous whitespace
+Use these products as tonal references:
+
+### Notion
+
+Reference for:
+
+- typography
+- hierarchy
+- spacing
+- readability
+- calm presentation
+
+### Google Keep
+
+Reference for:
+
+- simplicity
+- quick capture
+- low-friction interaction
+
+Do not copy these products.
+
+Use them only as visual and interaction references.
+
+---
+
+# Desired Experience
+
+The interface should feel:
+
+- calm
+- clean
+- modern
+- lightweight
+- personal
+- trustworthy
+- highly readable
+
+The interface should be content-first.
+
+---
+
+# Avoid
+
+- enterprise dashboard aesthetics
+- excessive decoration
+- gamification
+- social media patterns
+- promotional surfaces
+- heavy gradients
+- flashy visuals
+- dense administration interfaces
+- clutter
+
+---
+
+# Typography
+
+Use a single font family across the application.
+
+Preferred order:
+
+1. Inter
+2. Roboto
+3. System UI Fonts
+
+Do not use multiple font families.
+
+Create hierarchy using:
+
+- font size
+- font weight
+- spacing
+
+The interface should feel consistent and quiet.
+
+---
+
+# Layout Philosophy
+
+Content drives layout.
+
+The interface should feel spacious and easy to scan.
+
+Prefer:
+
+- generous spacing
+- predictable hierarchy
+- simple alignment
+- large touch targets
+- minimal chrome
+
+Avoid:
+
+- nested containers
+- excessive card stacking
+- crowded toolbars
+- visual noise
+
+---
+
+# Complexity Rule
+
+When multiple design solutions are possible:
+
+Choose the simpler solution.
+
+Prefer:
+
+- fewer actions
+- fewer decisions
+- fewer visual treatments
+- fewer navigation paths
+
+Complexity must be earned.
+
+Simplicity is the default.
+
+---
+
+# Application Structure
+
+Primary Screens:
+
+1. Home
+2. Search
+3. Memory Detail
+4. Library
+5. Collection Detail
+6. Profile
+
+Navigation:
+
+Bottom Navigation
+
+- Home
+- Library
+- Profile
+
+Only three primary destinations should exist.
+
+---
+
+# Home Screen
+
+## Purpose
+
+Retrieval workspace.
+
+---
+
+## Sections
+
+1. Search / Paste Link
+2. Recent Activity
+3. Related Memories
+
+---
+
+## Primary Actions
+
+- Search
+- Save Link
+- Open Memory
+
+---
+
+## Design Goals
+
+- immediate retrieval
+- low cognitive load
 - clear hierarchy
-- content-first layouts
-- lightweight elevation
-- calm visual rhythm
-- large touch-friendly targets
-- strong readability
 
 ---
 
-## Avoid
+# Search Screen
 
-- dashboard aesthetics
-- enterprise density
-- promotional banners
-- marketing-style layouts
-- excessive visual decoration
-- attention-grabbing surfaces
+## Purpose
+
+Dedicated retrieval state.
 
 ---
 
-## Visual Hierarchy
+## Sections
 
-Primary
-
-Content
+1. Search Input
+2. Results
+3. No Result Recovery
 
 ---
 
-Secondary
+## Search Result Structure
+
+Required:
+
+- Thumbnail
+- Title
+- Source
+
+Optional:
+
+- Human Context
+- System Understanding
+- Relationship Hint
+
+---
+
+## Design Goals
+
+Recognition should happen before opening a result.
+
+---
+
+# Memory Detail Screen
+
+## Purpose
+
+Memory reconstruction.
+
+---
+
+## Structure
+
+Recognition
+
+↓
 
 Context
 
----
+↓
 
-Tertiary
+Understanding
 
-Metadata
+↓
 
----
+Related Memories
 
-The UI should consistently reinforce retrieval over administration.
+↓
 
----
-
-# Component Inventory
-
-The following components should exist within the design system.
+Actions
 
 ---
 
-# Search Components
+## Required Sections
+
+### Recognition
+
+- Thumbnail
+- Title
+- Source
+- Timestamp
+
+---
+
+### Context
+
+- Human Context
+- Source Context
+
+---
+
+### Understanding
+
+- System Understanding
+
+---
+
+### Related Memories
+
+- Related Memory Cards
+- Relationship Explanation
+
+---
+
+### Actions
+
+- Open Original
+- Share
+- Save To Collection
+- Edit Context
+- Delete
+
+---
+
+## Rules
+
+Single scrolling page.
+
+No tabs.
+
+No complex navigation.
+
+Hide empty sections.
+
+---
+
+# Library Screen
+
+## Purpose
+
+Archive exploration.
+
+---
+
+## Structure
+
+Filters
+
+↓
+
+Memory Grid
+
+↓
+
+Collections
+
+---
+
+## Default View
+
+Grid
+
+---
+
+## Optional View
+
+List
+
+---
+
+## Primary Actions
+
+- Open Memory
+- Open Collection
+- Filter
+- Multi Select
+
+---
+
+# Collection Detail Screen
+
+## Purpose
+
+Focused retrieval group.
+
+---
+
+## Structure
+
+Collection Header
+
+↓
+
+Memory Grid
+
+---
+
+## Header Contents
+
+- Collection Name
+- Memory Count
+- Description (optional)
+
+---
+
+# Profile Screen
+
+## Purpose
+
+Preferences and account management.
+
+---
+
+## Structure
+
+- Account
+- Preferences
+- Permissions
+- Integrations
+
+Keep minimal.
+
+Avoid feature bloat.
+
+---
+
+# Core Components
 
 ## Global Search Field
 
 Purpose:
 
-Unified retrieval and capture entry point.
+Unified retrieval and capture entry.
 
 ---
 
-Variants
+Variants:
 
 - Default
 - Focused
@@ -273,7 +489,7 @@ Variants
 
 ---
 
-Behavior
+Behavior:
 
 Text Input
 
@@ -289,97 +505,35 @@ Capture Flow
 
 ---
 
-Rules
-
-- Single global search pattern
-- No competing search bars
-- Visible from Home
-- Optimized for retrieval
-
----
-
-## Search Result Card
-
-Purpose:
-
-Recognition-focused retrieval result.
-
----
-
-Required Content
-
-- thumbnail
-- title
-- source
-
----
-
-Optional Content
-
-- human context
-- system understanding
-- relationship hint
-
----
-
-Rules
-
-Recognition should occur before opening.
-
----
-
-# Memory Components
-
 ## Memory Card
 
 Purpose:
 
-Primary object of the system.
+Primary content object.
 
 ---
 
-Required Content
+Required:
 
-- thumbnail
-- title
-- source
-
----
-
-Optional Content
-
-- timestamp
-- context indicators
-- relationship indicators
+- Thumbnail
+- Title
+- Source
 
 ---
 
-Rules
+Optional:
 
-Support rapid recognition.
-
-Avoid metadata overload.
-
----
-
-## Recent Activity Card
-
-Purpose:
-
-Quick re-entry into recently useful memories.
+- Context Indicators
+- Relationship Indicators
+- Timestamp
 
 ---
 
-Required Content
+Variants:
 
-- recognition cues
-- timestamp
-
----
-
-Rules
-
-Optimized for speed.
+- Standard
+- Compact
+- Search Result
 
 ---
 
@@ -391,16 +545,17 @@ Associative retrieval.
 
 ---
 
-Required Content
+Required:
 
-- recognition cues
-- relationship explanation
+- Thumbnail
+- Title
+- Relationship Explanation
 
 ---
 
-Rules
+Rule:
 
-Always explain relevance.
+Always explain why memories are related.
 
 ---
 
@@ -408,52 +563,49 @@ Always explain relevance.
 
 Purpose:
 
-Represent optional groupings.
+Represent collections.
 
 ---
 
-Required Content
+Required:
 
-- collection name
-- memory count
-
----
-
-Optional Content
-
-- preview imagery
+- Collection Name
+- Memory Count
 
 ---
 
-Rules
+Optional:
 
-Collections support retrieval.
+- Preview Image
 
-Collections are not the primary object.
+---
+
+## Recent Activity Card
+
+Purpose:
+
+Fast re-entry.
+
+---
+
+Required:
+
+- Recognition cues
+- Timestamp
 
 ---
 
 # Context Components
 
-## Human Context Block
+## Human Context
 
-Purpose:
+User-provided meaning.
 
-Display user-provided meaning.
+Examples:
 
----
-
-Examples
-
-Rahul recommended this.
-
-Use for wedding planning.
-
-Compare with blue version.
-
----
-
-Rules
+- Rahul recommended this
+- Use for wedding planning
+- Compare with blue version
 
 Must be visually distinct.
 
@@ -461,91 +613,31 @@ Treated as authoritative.
 
 ---
 
-## System Understanding Block
+## System Understanding
 
-Purpose:
+AI-generated meaning.
 
-Display inferred meaning.
+Examples:
 
----
+- Travel Reference
+- Future Purchase
+- Workout To Try
 
-Examples
+Must be visually distinct from Human Context.
 
-Travel Reference
-
-Future Purchase
-
-Workout To Try
+Never presented as fact.
 
 ---
 
-Rules
-
-Must remain visually distinct from Human Context.
-
-Never appear as fact.
-
----
-
-## Relationship Explanation Block
-
-Purpose:
+## Relationship Explanation
 
 Explain why memories are connected.
 
----
-
-Examples
+Example:
 
 Related because both reference Japan travel.
 
----
-
-Rules
-
-Explanation required.
-
-No unexplained relationships.
-
----
-
-# Navigation Components
-
-## Bottom Navigation
-
-Items
-
-- Home
-- Library
-- Profile
-
----
-
-Rules
-
-Three destinations only.
-
----
-
-## Top App Bar
-
-Purpose
-
-Provide screen context.
-
----
-
-May Contain
-
-- title
-- back navigation
-- contextual actions
-
----
-
-Rules
-
-Keep lightweight.
+Relationship explanations are required.
 
 ---
 
@@ -553,208 +645,125 @@ Keep lightweight.
 
 ## Save Confirmation Sheet
 
-Purpose
+Structure:
 
-Confirm successful capture.
+Success
 
----
+↓
 
-Contents
+Preview
 
-- success state
-- preview
-- view memory
-- undo
+↓
 
----
+View Memory
 
-Rules
+↓
 
-Reassuring but unobtrusive.
+Undo
 
 ---
 
-## Empty State
+## Empty States
 
-Purpose
+Every empty state should:
 
-Provide guidance.
+- explain value
+- provide guidance
+- suggest next action
 
----
-
-Rules
-
-Must include:
-
-- value explanation
-- next action
-
-Avoid:
-
-- dead ends
-- blank states
+Never create dead ends.
 
 ---
 
-## Error State
+## Error States
 
-Purpose
+Clearly explain the issue.
 
-Explain failures clearly.
-
----
-
-Rules
-
-Provide recovery paths whenever possible.
+Always provide recovery paths.
 
 ---
 
-# Selection Components
+# Accessibility
 
-## Multi-Select Mode
+Must support:
 
-Available In
-
-Library only.
-
----
-
-Purpose
-
-Bulk collection creation.
-
----
-
-Rules
-
-Do not expose globally.
-
----
-
-# Dialog Components
-
-## Confirmation Dialog
-
-Purpose
-
-Protect destructive actions.
-
----
-
-Examples
-
-Delete Memory
-
-Delete Collection
-
----
-
-Rules
-
-Use sparingly.
-
----
-
-# Motion Principles
-
-Motion should be:
-
-- purposeful
-- subtle
-- informative
-
-Avoid:
-
-- decorative animation
-- attention-seeking transitions
-- unnecessary movement
-
-Motion should communicate:
-
-- state change
-- navigation
-- feedback
-
----
-
-# Accessibility Requirements
-
-The design system must support:
-
-- keyboard accessibility
+- keyboard navigation
 - screen readers
-- visible focus indicators
-- touch-friendly targets
+- visible focus states
 - sufficient contrast
-- semantic hierarchy
+- touch-friendly targets
 
----
-
-Users should never depend solely on:
+Users should never rely solely on:
 
 - color
+- icons
 - animation
-- iconography
 
 to understand information.
 
 ---
 
-# Responsive Principles
+# Responsive Design
 
-Primary Target
+Primary Target:
 
 Mobile
 
----
-
-Secondary Target
+Secondary Target:
 
 Tablet
 
----
-
-Future Support
+Future:
 
 Desktop
 
----
-
-Rules
-
 Design mobile-first.
 
-Scale upward progressively.
-
-Do not rely on hover interactions.
+Do not depend on hover interactions.
 
 ---
 
-# Design System Anti-Patterns
+# Generation Instructions
 
-Avoid:
+Generate:
 
-- dashboard-heavy layouts
-- card overload
-- hidden navigation
-- dense data tables
-- feed patterns
-- social interaction patterns
+- mobile-first screens
+- design system foundations
+- component variants
+- interaction states
+- high-fidelity UI
+
+Prioritize:
+
+Recognition
+
+↓
+
+Context
+
+↓
+
+Understanding
+
+before actions.
+
+Do not generate:
+
+- feeds
+- dashboards
+- social features
 - gamification
-- promotional surfaces
-- AI-first interfaces
-- excessive filtering systems
+- promotional experiences
 
 ---
 
-# Design System Success Criteria
+# Success Criteria
 
-The design system succeeds when users can:
+The design succeeds when users can:
 
 - recognize information quickly
-- understand meaning rapidly
-- retrieve memories confidently
+- retrieve information confidently
+- understand why it mattered
 - navigate naturally
 - act with minimal effort
 
@@ -762,12 +771,8 @@ without feeling overwhelmed.
 
 ---
 
-# Closing Principle
+# Final Principle
 
-Mimo is not a bookmarking tool.
+Mimo is a retrieval-first product.
 
-It is a memory retrieval product.
-
-Every component should strengthen recognition, context, understanding, relationships or action.
-
-If a component primarily increases complexity, maintenance burden or attention demand, it should be reconsidered.
+Every screen and component should help users reconnect with information when it becomes useful again.
