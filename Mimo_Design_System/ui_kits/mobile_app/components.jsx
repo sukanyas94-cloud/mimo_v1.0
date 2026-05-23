@@ -255,22 +255,11 @@ function Thumb({ memory, aspect, size, radius = 10 }) {
     background: memory.thumbColor || 'linear-gradient(135deg,#B5A88C,#7A6B4E)',
     borderRadius: radius,
     position: 'relative',
+    overflow: 'hidden',
     boxShadow: 'inset 0 0 0 1px rgba(20,20,18,0.04)',
   };
   if (size) { style.width = size; style.height = size; style.flexShrink = 0; }
   else if (aspect) { style.aspectRatio = aspect; }
-  if (memory.video) {
-    return (
-      <div style={style}>
-        <div style={{
-          position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: '#FFF',
-        }}>
-          <window.IconPlay size={28} />
-        </div>
-      </div>
-    );
-  }
   if (memory.fallback) {
     return (
       <div style={{ ...style, background: M.quiet, display: 'flex', alignItems: 'center', justifyContent: 'center', color: M.ink4 }}>
@@ -278,7 +267,36 @@ function Thumb({ memory, aspect, size, radius = 10 }) {
       </div>
     );
   }
-  return <div style={style} />;
+  return (
+    <div style={style}>
+      {memory.image && (
+        <img
+          src={memory.image}
+          alt=""
+          loading="lazy"
+          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      )}
+      {memory.video && (
+        <div style={{
+          position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: memory.image ? 'linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.45) 100%)' : 'transparent',
+          color: '#FFF',
+        }}>
+          <div style={{
+            width: size ? Math.max(32, size * 0.5) : 48,
+            height: size ? Math.max(32, size * 0.5) : 48,
+            borderRadius: 999, background: 'rgba(20,20,18,0.55)',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            backdropFilter: 'blur(4px)',
+          }}>
+            <window.IconPlay size={size ? 16 : 22} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ─── Context blocks ──────────────────────────────────────────────────────
@@ -340,36 +358,153 @@ function SectionHeader({ title, action }) {
 }
 
 // ─── Save Confirmation Sheet ─────────────────────────────────────────────
-function SaveSheet({ memory, onView, onUndo, onDismiss }) {
+// V2.5 capture sheet — appears over the source app (or in-app paste flow).
+// Preview · promoted AI suggestion row · collapsed "Add a note" · Cancel/Save.
+// API:
+//   memory                 — the previewed memory (already created upstream)
+//   onSave(note)           — commit with optional note text
+//   onSaveToCollection(name, note) — commit + add to a suggested collection
+//   onDismiss()            — cancel without committing
+function SaveSheet({ memory, onSave, onSaveToCollection, onDismiss,
+                    // Backward-compat — old SaveSheet callers used onView/onUndo.
+                    // Kept here so app.jsx upgrades are mechanical, not breaking.
+                    onView, onUndo }) {
+  const [noteExpanded, setNoteExpanded] = React.useState(false);
+  const [note, setNote] = React.useState('');
+
+  const suggestionName = (memory.systemUnderstanding && window.suggestCollectionNames(memory)?.[0]) || null;
+
+  const handleSave = () => {
+    if (onSave) onSave(note.trim());
+    else if (onView) onView();
+  };
+  const handleSaveToCollection = () => {
+    if (onSaveToCollection && suggestionName) onSaveToCollection(suggestionName, note.trim());
+    else handleSave();
+  };
+  const handleCancel = () => {
+    if (onDismiss) onDismiss();
+    else if (onUndo) onUndo();
+  };
+
   return (
     <div style={{
       position: 'absolute', inset: 0, zIndex: 30,
-      background: 'rgba(20,20,18,0.32)',
+      background: M.scrim,
       display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
       animation: 'mimoFadeIn 220ms cubic-bezier(0.2,0,0.2,1)',
-    }} onClick={onDismiss}>
+    }} onClick={handleCancel}>
       <div onClick={(e) => e.stopPropagation()} style={{
         background: M.surface, borderRadius: '20px 20px 0 0',
-        padding: '18px 18px 28px', boxShadow: M.elev3,
+        padding: '14px 18px 22px', boxShadow: M.elev3,
         animation: 'mimoSlideUp 220ms cubic-bezier(0.2,0,0.2,1)',
+        color: M.ink1,
       }}>
         <div style={{ width: 36, height: 4, borderRadius: 999, background: M.borderStrong, margin: '0 auto 14px' }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 999, background: M.successBg, color: M.success, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-            <window.IconCheck size={16} />
-          </div>
-          <div style={{ fontFamily: M.font, fontSize: 15, fontWeight: 600, color: M.ink1 }}>Saved.</div>
+
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <div style={{
+            width: 28, height: 28, borderRadius: 8, background: M.accent,
+            color: 'var(--ink-on-accent)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: M.font, fontWeight: 600, fontSize: 13,
+          }}>M</div>
+          <h2 style={{ margin: 0, fontFamily: M.font, fontSize: 16, fontWeight: 600, color: M.ink1 }}>Save to Mimo</h2>
         </div>
-        <div style={{ display: 'flex', gap: 12, marginTop: 14, padding: 12, background: M.quiet, borderRadius: 12 }}>
-          <Thumb memory={memory} size={56} radius={8} />
+
+        {/* Preview */}
+        <div style={{
+          display: 'flex', gap: 12, padding: 10,
+          background: M.quiet, borderRadius: 12,
+        }}>
+          <Thumb memory={memory} size={64} radius={8} />
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontFamily: M.font, fontSize: 14, fontWeight: 600, color: M.ink1, lineHeight: 1.3 }}>{memory.title}</div>
+            <div style={{
+              fontFamily: M.font, fontSize: 14, fontWeight: 600, color: M.ink1, lineHeight: 1.3,
+              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+            }}>{memory.title}</div>
             <div style={{ fontFamily: M.font, fontSize: 12, color: M.ink3, marginTop: 2 }}>{memory.source}</div>
           </div>
         </div>
+
+        {/* Promoted AI suggestion row */}
+        {suggestionName && (
+          <button onClick={handleSaveToCollection} style={{
+            marginTop: 12, width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+            padding: '12px 14px',
+            background: M.systemBg, border: `1px solid ${M.systemBorder}`,
+            borderRadius: 12, cursor: 'pointer', textAlign: 'left',
+            transition: 'background 160ms cubic-bezier(0.2,0,0.2,1)',
+          }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: 8,
+              background: M.systemInk, color: M.systemBg,
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}><window.IconSparkles size={14} /></div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: M.font, fontSize: 13, fontWeight: 600, color: M.systemInk }}>
+                Save to <span style={{ fontWeight: 700 }}>{suggestionName}</span>
+              </div>
+              <div style={{ fontFamily: M.font, fontSize: 11, color: M.systemInk, opacity: 0.8, marginTop: 2 }}>
+                Mimo thinks · based on this link
+              </div>
+            </div>
+            <span style={{
+              fontFamily: M.font, fontSize: 11, fontWeight: 600,
+              color: M.systemInk,
+              background: M.surface, padding: '4px 8px', borderRadius: 6,
+            }}>↵</span>
+          </button>
+        )}
+
+        {/* Note affordance — collapsed by default */}
+        {!noteExpanded ? (
+          <button onClick={() => setNoteExpanded(true)} style={{
+            marginTop: 8, width: '100%',
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: '12px 14px',
+            background: 'transparent', border: `1px dashed ${M.borderStrong}`,
+            borderRadius: 12, cursor: 'pointer', textAlign: 'left',
+            color: M.ink3, fontFamily: M.font, fontSize: 13,
+          }}>
+            <window.IconPencil size={14} />
+            <span style={{ flex: 1 }}>Add a note · why are you saving this?</span>
+            <span style={{ fontSize: 11, opacity: 0.7 }}>Optional</span>
+          </button>
+        ) : (
+          <div style={{
+            marginTop: 8, padding: 12, borderRadius: 12,
+            background: M.humanBg, border: `1px solid ${M.humanBorder}`,
+          }}>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              fontFamily: M.font, fontSize: 11, fontWeight: 600,
+              letterSpacing: '0.04em', textTransform: 'uppercase', color: M.humanInk,
+              marginBottom: 6,
+            }}>
+              <window.IconPencil size={11} />
+              You noted
+            </div>
+            <textarea
+              autoFocus
+              rows={3}
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Rahul recommended this. Try during the Japan trip."
+              style={{
+                width: '100%', boxSizing: 'border-box',
+                padding: 0, border: 0, background: 'transparent',
+                color: M.humanInk, fontFamily: M.font, fontSize: 14, lineHeight: 1.45,
+                resize: 'none', outline: 'none',
+              }}
+            />
+          </div>
+        )}
+
+        {/* Commit buttons */}
         <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-          <Button variant="secondary" style={{ flex: 1 }} onClick={onUndo}>Undo</Button>
-          <Button variant="primary" style={{ flex: 1 }} onClick={onView}>View memory</Button>
+          <Button variant="secondary" style={{ flex: 1 }} onClick={handleCancel}>Cancel</Button>
+          <Button variant="primary"   style={{ flex: 1 }} onClick={handleSave}>Save</Button>
         </div>
       </div>
     </div>
@@ -470,4 +605,334 @@ Object.assign(window, {
   MemoryCard, Thumb, HumanContextBlock, SystemContextBlock, RelatedCard,
   SectionHeader, SaveSheet,
   AddContextSheet, SourceUnavailableBlock, MultiSelectBar,
+});
+
+// ─── System understanding as a verb-button ───────────────────────────────
+// Tappable; "+ Save" affordance baked into the chip itself.
+function SystemActionChip({ label, dimmed, onClick }) {
+  return (
+    <button onClick={dimmed ? undefined : onClick} style={{
+      display: 'inline-flex', alignItems: 'center', gap: 8,
+      padding: '6px 10px 6px 10px',
+      background: dimmed ? M.quiet : M.systemBg,
+      border: `1px solid ${dimmed ? M.border : M.systemBorder}`,
+      borderRadius: 999,
+      cursor: dimmed ? 'default' : 'pointer',
+      color: dimmed ? M.ink3 : M.systemInk,
+      fontFamily: M.font, fontSize: 12, fontWeight: 500,
+      transition: 'background 160ms cubic-bezier(0.2,0,0.2,1)',
+    }}>
+      <window.IconSparkles size={12} />
+      <span>{label}</span>
+      {!dimmed && (
+        <span style={{
+          width: 16, height: 16, borderRadius: 999,
+          background: M.systemInk, color: M.systemBg,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          marginLeft: 2,
+        }}><window.IconPlus size={10} /></span>
+      )}
+      {dimmed && (
+        <window.IconCheck size={11} style={{ marginLeft: 2, color: M.ink3 }} />
+      )}
+    </button>
+  );
+}
+
+// ─── Membership chip (read-only — appears once a memory joins a collection)
+function MembershipChip({ name, swatch, cover, onClick }) {
+  return (
+    <span onClick={onClick} style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      padding: '4px 10px 4px 4px',
+      background: M.quiet,
+      border: `1px solid ${M.border}`,
+      borderRadius: 999,
+      fontFamily: M.font, fontSize: 12, fontWeight: 500, color: M.ink2,
+      cursor: onClick ? 'pointer' : 'default',
+    }}>
+      <span style={{
+        width: 18, height: 18, borderRadius: 999, background: swatch,
+        position: 'relative', overflow: 'hidden', flexShrink: 0,
+      }}>
+        {cover && (
+          <img src={cover} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', display: 'block',
+          }} />
+        )}
+      </span>
+      {name}
+    </span>
+  );
+}
+
+// ─── Toast (transient confirmation) ──────────────────────────────────────
+function Toast({ children, action, actionLabel, onAction, onDismiss }) {
+  React.useEffect(() => {
+    const t = setTimeout(() => onDismiss && onDismiss(), 4200);
+    return () => clearTimeout(t);
+  }, [onDismiss]);
+  return (
+    <div style={{
+      position: 'absolute', left: 16, right: 16, bottom: 76, zIndex: 40,
+      background: M.ink1, color: 'var(--bg)',
+      borderRadius: 10, padding: '12px 14px',
+      display: 'flex', alignItems: 'center', gap: 10,
+      boxShadow: M.elev2,
+      fontFamily: M.font, fontSize: 13,
+      animation: 'mimoSlideUp 220ms cubic-bezier(0.2,0,0.2,1)',
+    }}>
+      <window.IconCircleCheck size={16} />
+      <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
+      {actionLabel && (
+        <button onClick={onAction} style={{
+          color: 'inherit', background: 'transparent', border: 0,
+          fontSize: 13, fontWeight: 600, cursor: 'pointer',
+        }}>{actionLabel}</button>
+      )}
+    </div>
+  );
+}
+
+// ─── Collection Picker Sheet ─────────────────────────────────────────────
+// Canonical Save-to-collection surface. Pre-seeded suggestions from system
+// understanding · type-to-create · existing collections filtered by query.
+function CollectionPickerSheet({ memory, collections, onSaveExisting, onCreate, onDismiss }) {
+  const [query, setQuery] = React.useState('');
+  const inputRef = React.useRef(null);
+
+  const suggestionNames = window.suggestCollectionNames(memory);
+  const existingNames = new Set(collections.map(c => c.name.toLowerCase()));
+  const suggested = suggestionNames.filter(n => !existingNames.has(n.toLowerCase()));
+
+  const q = query.trim().toLowerCase();
+  const exists = collections.find(c => c.name.toLowerCase() === q);
+  const matches = q.length === 0
+    ? collections
+    : collections.filter(c => c.name.toLowerCase().includes(q));
+
+  React.useEffect(() => {
+    // Don't autofocus — keeps suggestions in the user's eyeline first.
+  }, []);
+
+  return (
+    <div onClick={onDismiss} style={{
+      position: 'absolute', inset: 0, zIndex: 30,
+      background: M.scrim,
+      display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+      animation: 'mimoFadeIn 220ms cubic-bezier(0.2,0,0.2,1)',
+    }}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        background: M.surface, borderRadius: '20px 20px 0 0',
+        boxShadow: M.elev3, maxHeight: '82%',
+        display: 'flex', flexDirection: 'column',
+        animation: 'mimoSlideUp 220ms cubic-bezier(0.2,0,0.2,1)',
+      }}>
+        <div style={{ padding: '16px 18px 0' }}>
+          <div style={{ width: 36, height: 4, borderRadius: 999, background: M.borderStrong, margin: '0 auto 14px' }} />
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            <h2 style={{ margin: 0, fontFamily: M.font, fontSize: 17, fontWeight: 600, color: M.ink1 }}>Save to collection</h2>
+            <button onClick={onDismiss} aria-label="Close" style={{ border: 0, background: 'transparent', padding: 6, color: M.ink3, cursor: 'pointer', display: 'inline-flex' }}>
+              <window.IconClose size={18} />
+            </button>
+          </div>
+          <div style={{ marginTop: 4, fontFamily: M.font, fontSize: 13, color: M.ink3, lineHeight: 1.5, marginBottom: 12 }}>
+            Pick a suggested collection, or type a new name.
+          </div>
+          <SearchField
+            value={query}
+            onChange={setQuery}
+            placeholder="Find or create a collection"
+          />
+        </div>
+
+        <div style={{ flex: 1, overflowY: 'auto', padding: '0 18px 22px' }}>
+          {/* Suggestions — only when no query, or query has no exact match */}
+          {!exists && (
+            <>
+              {q.length > 0 && (
+                <>
+                  <SectionLabel>No match — create new</SectionLabel>
+                  <CreateRow
+                    name={query.trim()}
+                    cover={memory.image}
+                    gradient={memory.thumbColor}
+                    onClick={() => onCreate(query.trim())}
+                  />
+                </>
+              )}
+
+              {suggested.length > 0 && q.length === 0 && (
+                <>
+                  <SectionLabel icon={<window.IconSparkles size={11} />}>Suggested by Mimo · from this memory</SectionLabel>
+                  {suggested.map((name, i) => (
+                    <SuggestRow
+                      key={name}
+                      name={name}
+                      subtitle={i === 0
+                        ? `Inferred from "${memory.systemUnderstanding}"`
+                        : i === 1 ? 'Broader · groups all of this kind' : 'Tighter · this moment only'}
+                      cover={memory.image}
+                      gradient={memory.thumbColor}
+                      recommended={i === 0}
+                      onClick={() => onCreate(name)}
+                    />
+                  ))}
+                </>
+              )}
+            </>
+          )}
+
+          <SectionLabel>{q.length > 0 ? 'Matching collections' : 'Your collections'}</SectionLabel>
+          {matches.length === 0 ? (
+            <div style={{
+              padding: '14px 4px', display: 'flex', alignItems: 'center', gap: 10,
+              color: M.ink3, fontFamily: M.font, fontSize: 13,
+            }}>
+              <window.IconFolder size={14} />
+              {q.length === 0
+                ? 'No collections yet. Pick a suggestion above — or type a new name.'
+                : 'Nothing matches. Press enter on the create row above.'}
+            </div>
+          ) : (
+            matches.map(c => (
+              <ExistingRow
+                key={c.id}
+                collection={c}
+                selected={memory.memberships.includes(c.id)}
+                onClick={() => onSaveExisting(c.id)}
+              />
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SectionLabel({ icon, children }) {
+  return (
+    <div style={{
+      marginTop: 18, marginBottom: 8,
+      display: 'flex', alignItems: 'center', gap: 6,
+      fontFamily: M.font, fontSize: 11, fontWeight: 600,
+      letterSpacing: '0.06em', textTransform: 'uppercase', color: M.ink3,
+    }}>{icon}{children}</div>
+  );
+}
+
+function SuggestRow({ name, subtitle, cover, gradient, recommended, onClick }) {
+  return (
+    <button onClick={onClick} style={{
+      width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+      padding: 10, marginBottom: 6,
+      background: recommended ? M.accentSoft : M.surface,
+      border: `1px solid ${recommended ? M.accent : M.border}`,
+      borderRadius: 12, cursor: 'pointer', textAlign: 'left',
+      transition: 'background 160ms cubic-bezier(0.2,0,0.2,1)',
+    }}>
+      <div style={{
+        width: 44, height: 44, borderRadius: 10, flexShrink: 0, position: 'relative',
+        background: gradient, overflow: 'hidden',
+      }}>
+        {cover && (
+          <img src={cover} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', display: 'block',
+          }} />
+        )}
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontFamily: M.font, fontSize: 14, fontWeight: 600, color: M.ink1 }}>{name}</div>
+        <div style={{ fontFamily: M.font, fontSize: 12, color: M.ink3, marginTop: 2 }}>{subtitle}</div>
+      </div>
+      <span style={{
+        fontFamily: M.font, fontSize: 11, fontWeight: 600,
+        color: recommended ? M.accentStrong : M.ink3,
+        padding: '5px 10px', borderRadius: 6,
+        background: recommended ? M.surface : 'transparent',
+        border: recommended ? 'none' : `1px solid ${M.border}`,
+      }}>
+        {recommended ? 'Save' : '+ Save'}
+      </span>
+    </button>
+  );
+}
+
+function CreateRow({ name, cover, gradient, onClick }) {
+  return (
+    <button onClick={onClick} style={{
+      width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+      padding: 12, marginBottom: 6,
+      background: M.accentSoft, border: `1px solid ${M.accent}`,
+      borderRadius: 12, cursor: 'pointer', textAlign: 'left',
+    }}>
+      <div style={{
+        width: 44, height: 44, borderRadius: 10, flexShrink: 0, position: 'relative',
+        background: gradient, overflow: 'hidden',
+      }}>
+        {cover && (
+          <img src={cover} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', display: 'block',
+          }} />
+        )}
+        <div style={{
+          position: 'absolute', inset: 0, background: 'rgba(139,90,60,0.55)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: '#FFF',
+        }}><window.IconPlus size={18} /></div>
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontFamily: M.font, fontSize: 14, fontWeight: 600, color: M.ink1 }}>Create "{name}"</div>
+        <div style={{ fontFamily: M.font, fontSize: 12, color: M.ink2, marginTop: 2 }}>New collection · cover inherited from this memory</div>
+      </div>
+      <span style={{
+        fontFamily: M.font, fontSize: 12, fontWeight: 600,
+        color: M.accentStrong, background: M.surface,
+        padding: '4px 8px', borderRadius: 6,
+      }}>↵</span>
+    </button>
+  );
+}
+
+function ExistingRow({ collection, selected, onClick }) {
+  return (
+    <button onClick={onClick} style={{
+      width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+      padding: '10px 8px', borderRadius: 10,
+      background: selected ? M.accentSoft : 'transparent',
+      border: 0, cursor: 'pointer', textAlign: 'left',
+      transition: 'background 160ms cubic-bezier(0.2,0,0.2,1)',
+    }}>
+      <div style={{
+        width: 40, height: 40, borderRadius: 10, flexShrink: 0, position: 'relative',
+        background: collection.swatch, overflow: 'hidden',
+      }}>
+        {collection.cover && (
+          <img src={collection.cover} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', display: 'block',
+          }} />
+        )}
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontFamily: M.font, fontSize: 14, fontWeight: 600, color: M.ink1 }}>{collection.name}</div>
+        <div style={{ fontFamily: M.font, fontSize: 12, color: M.ink3, marginTop: 2 }}>{collection.count} {collection.count === 1 ? 'memory' : 'memories'}</div>
+      </div>
+      <div style={{
+        width: 22, height: 22, borderRadius: 6,
+        border: selected ? 'none' : `2px solid ${M.borderStrong}`,
+        background: selected ? M.accent : 'transparent',
+        color: 'var(--ink-on-accent)',
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      }}>{selected && <window.IconCheck size={13} />}</div>
+    </button>
+  );
+}
+
+Object.assign(window, {
+  SystemActionChip, MembershipChip, Toast,
+  CollectionPickerSheet,
 });

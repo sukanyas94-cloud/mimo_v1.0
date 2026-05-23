@@ -18,6 +18,26 @@ const SCREEN_PAD = 16;
 const SECTION_GAP = 28;
 const BOTTOM_SAFE = 24; // space above bottom nav
 
+// ─── Wordmark + monogram ───────────────────────────────────────────────────
+// Both inline so they pick up var(--accent) in light & dark.
+// Source SVGs: assets/logo-wordmark.svg, assets/logo-monogram.svg.
+function Wordmark({ height = 22 }) {
+  return (
+    <svg viewBox="0 0 200 64" height={height} role="img" aria-label="Mimo" style={{ display: 'block', color: 'var(--accent)' }}>
+      <text x="0" y="48" fontFamily="Inter, Roboto, system-ui, sans-serif" fontSize="48" fontWeight="600" letterSpacing="-1.2" fill="currentColor">Mimo</text>
+    </svg>
+  );
+}
+
+function Monogram({ size = 28 }) {
+  return (
+    <svg viewBox="0 0 64 64" width={size} height={size} role="img" aria-label="Mimo" style={{ display: 'block', color: 'var(--accent)' }}>
+      <rect width="64" height="64" rx="14" fill="currentColor" />
+      <text x="32" y="46" textAnchor="middle" fontFamily="Inter, Roboto, system-ui, sans-serif" fontSize="40" fontWeight="600" letterSpacing="-1.6" fill="#FAFAF6">M</text>
+    </svg>
+  );
+}
+
 // ─── HOME ────────────────────────────────────────────────────────────────
 function HomeScreen({ openMemory, openSearch, onSaveSheet, isEmpty }) {
   const recent = MEMORIES.slice(0, 3);
@@ -26,7 +46,7 @@ function HomeScreen({ openMemory, openSearch, onSaveSheet, isEmpty }) {
   if (isEmpty) {
     return (
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <AppBar title="Mimo" trailing={<IconButton ariaLabel="Notifications"><IconBell size={22} /></IconButton>} />
+        <AppBar leading={<Monogram />} title={<Wordmark />} trailing={<IconButton ariaLabel="Notifications"><IconBell size={22} /></IconButton>} />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12, textAlign: 'center' }}>
           <div style={{ width: 56, height: 56, borderRadius: 14, background: M.accentSoft, color: M.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
             <IconInbox size={28} />
@@ -47,7 +67,7 @@ function HomeScreen({ openMemory, openSearch, onSaveSheet, isEmpty }) {
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      <AppBar title="Mimo" trailing={<IconButton ariaLabel="Notifications"><IconBell size={22} /></IconButton>} />
+      <AppBar leading={<Monogram />} title={<Wordmark />} trailing={<IconButton ariaLabel="Notifications"><IconBell size={22} /></IconButton>} />
       <div style={{ flex: 1, overflow: 'auto', padding: `8px ${SCREEN_PAD}px ${BOTTOM_SAFE}px` }}>
         <div onClick={openSearch} style={{ marginBottom: SECTION_GAP, cursor: 'pointer' }}>
           <SearchField value="" placeholder="Search or paste a link" />
@@ -143,8 +163,10 @@ function SearchScreen({ openMemory, onClose, onSaveSheet }) {
 }
 
 // ─── MEMORY DETAIL ───────────────────────────────────────────────────────
-function MemoryDetailScreen({ memoryId, openMemory, onBack, onEditContext }) {
+function MemoryDetailScreen({ memoryId, openMemory, onBack, onEditContext, onOpenCollectionPicker, onQuickSaveToSystemCategory, openCollection }) {
   const memory = findMemory(memoryId) || MEMORIES[0];
+  const memberships = (memory.memberships || []).map(id => window.findCollection(id)).filter(Boolean);
+  const systemCategoryAlreadySaved = !!memberships.find(c => c.name.toLowerCase() === (memory.systemUnderstanding || '').toLowerCase());
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -165,6 +187,28 @@ function MemoryDetailScreen({ memoryId, openMemory, onBack, onEditContext }) {
             <span aria-hidden="true">·</span>
             <span>{memory.date}</span>
           </div>
+
+          {/* Action row: system-understanding chip-as-verb + memberships */}
+          {(memory.systemUnderstanding || memberships.length > 0) && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
+              {memory.systemUnderstanding && (
+                <window.SystemActionChip
+                  label={memory.systemUnderstanding}
+                  dimmed={systemCategoryAlreadySaved}
+                  onClick={() => onQuickSaveToSystemCategory && onQuickSaveToSystemCategory(memory)}
+                />
+              )}
+              {memberships.map(c => (
+                <window.MembershipChip
+                  key={c.id}
+                  name={c.name}
+                  swatch={c.swatch}
+                  cover={c.cover}
+                  onClick={() => openCollection && openCollection(c.id)}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Context */}
@@ -201,20 +245,135 @@ function MemoryDetailScreen({ memoryId, openMemory, onBack, onEditContext }) {
 
         {/* Actions */}
         <div style={{ padding: `28px ${SCREEN_PAD}px 0` }}>
-          <Button variant="primary" icon={<IconExternal size={14} />} style={{ width: '100%' }} disabled={memory.sourceUnavailable}>
-            {memory.sourceUnavailable ? 'Source unavailable' : 'Open original'}
-          </Button>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 10 }}>
-            <Button variant="secondary" icon={<IconShare size={14} />} size="md" style={{ width: '100%' }}>Share</Button>
-            <Button variant="secondary" icon={<IconBookmarkPlus size={14} />} size="md" style={{ width: '100%' }}>Save</Button>
-            <Button variant="secondary" icon={<IconPencil size={14} />} size="md" style={{ width: '100%' }} onClick={() => onEditContext && onEditContext(memory)}>Edit</Button>
+          {memory.sourceUnavailable ? (
+            <Button variant="primary" icon={<IconExternal size={14} />} style={{ width: '100%' }} disabled>
+              Source unavailable
+            </Button>
+          ) : (
+            <SmartLauncher memory={memory} />
+          )}
+
+          {/* Save to collection — full-width, deliberate path */}
+          <button
+            onClick={() => onOpenCollectionPicker && onOpenCollectionPicker(memory)}
+            style={{
+              marginTop: 10, width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+              padding: '12px 14px',
+              background: M.surface,
+              border: `1px solid ${M.borderStrong}`,
+              borderRadius: 10, cursor: 'pointer',
+              color: M.ink1, fontFamily: M.font, fontSize: 14, fontWeight: 500,
+              transition: 'background 160ms cubic-bezier(0.2,0,0.2,1)',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = M.quiet; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = M.surface; }}
+          >
+            <IconBookmarkPlus size={16} />
+            <span style={{ flex: 1, textAlign: 'left' }}>
+              Save to collection
+              {memberships.length > 0 && (
+                <span style={{ marginLeft: 6, color: M.ink3, fontWeight: 400, fontSize: 13 }}>
+                  · in {memberships.length}
+                </span>
+              )}
+            </span>
+            <IconChevR size={14} style={{ color: M.ink3 }} />
+          </button>
+
+          <div style={{ marginTop: 8 }}>
+            <Button variant="secondary" icon={<IconPencil size={14} />} size="md" style={{ width: '100%' }} onClick={() => onEditContext && onEditContext(memory)}>
+              Edit context
+            </Button>
           </div>
-          <div style={{ marginTop: 16 }}>
+          <div style={{ marginTop: 24, display: 'flex', justifyContent: 'center' }}>
             <Button variant="danger" icon={<IconTrash size={14} />}>Delete memory</Button>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+// ─── Smart launcher ─────────────────────────────────────────────────────
+// V2.5 handoff surface. Primary CTA opens the native source app if known;
+// alternatives ("Open in browser", "Send to X", "Copy link") live below.
+function SmartLauncher({ memory }) {
+  const nativeApp = window.getNativeApp(memory);
+  const recipient = window.getRecipient(memory);
+
+  return (
+    <>
+      <button style={{
+        width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+        padding: '14px 14px',
+        background: M.ink1, color: 'var(--bg)',
+        border: 0, borderRadius: 10, cursor: 'pointer',
+        fontFamily: M.font, fontSize: 15, fontWeight: 500,
+        transition: 'opacity 160ms cubic-bezier(0.2,0,0.2,1)',
+      }}>
+        <IconExternal size={16} />
+        <span style={{ flex: 1, textAlign: 'left' }}>
+          {nativeApp ? `Open in ${nativeApp.name}` : 'Open original'}
+        </span>
+        <IconChevR size={14} style={{ opacity: 0.7 }} />
+      </button>
+
+      <div style={{
+        marginTop: 14, fontSize: 11, fontWeight: 600, letterSpacing: '0.06em',
+        textTransform: 'uppercase', color: M.ink3,
+        display: 'flex', alignItems: 'center', gap: 6,
+      }}>
+        <window.IconSparkles size={11} />
+        Mimo thinks · other ways
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+        {nativeApp && (
+          <SmartRow icon={<window.IconGlobe size={14} />} title="Open in browser" sub={memory.source} />
+        )}
+        {recipient && (
+          <SmartRow
+            icon={<IconShare size={14} />}
+            title={`Send to ${recipient.name}`}
+            sub={`${recipient.app} · from your note`}
+            recommended
+          />
+        )}
+        {!recipient && (
+          <SmartRow icon={<IconShare size={14} />} title="Share" sub="Send to anyone" />
+        )}
+        <SmartRow icon={<IconLink size={14} />} title="Copy link" sub="To paste anywhere" />
+      </div>
+    </>
+  );
+}
+
+function SmartRow({ icon, title, sub, recommended }) {
+  return (
+    <button style={{
+      width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+      padding: '10px 12px',
+      background: recommended ? M.accentSoft : M.surface,
+      border: `1px solid ${recommended ? M.accent : M.border}`,
+      borderRadius: 10, cursor: 'pointer', textAlign: 'left',
+      color: M.ink1, fontFamily: M.font,
+      transition: 'background 160ms cubic-bezier(0.2,0,0.2,1)',
+    }}>
+      <div style={{
+        width: 32, height: 32, borderRadius: 8,
+        background: M.quiet, color: M.ink2,
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+      }}>{icon}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 14, fontWeight: 600 }}>{title}</div>
+        <div style={{ fontSize: 12, color: M.ink3, marginTop: 2 }}>{sub}</div>
+      </div>
+      {recommended && (
+        <span style={{
+          fontSize: 10, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase',
+          color: M.accentStrong,
+        }}>Suggested</span>
+      )}
+    </button>
   );
 }
 
@@ -286,10 +445,26 @@ function LibraryScreen({ openMemory, openCollection, onMultiSelectCreate }) {
                   border: `1px solid ${M.border}`, borderRadius: 12, boxShadow: M.elev1,
                   textAlign: 'left', cursor: 'pointer',
                 }}>
-                  <div style={{ aspectRatio: '4/3', borderRadius: 8, background: c.swatch }} />
+                  <div style={{ aspectRatio: '4/3', borderRadius: 8, background: c.swatch, position: 'relative', overflow: 'hidden' }}>
+                    {c.cover && (
+                      <img src={c.cover} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{
+                        position: 'absolute', inset: 0, width: '100%', height: '100%',
+                        objectFit: 'cover', display: 'block',
+                      }} />
+                    )}
+                    {c.isNew && (
+                      <div style={{
+                        position: 'absolute', top: 8, left: 8,
+                        background: 'rgba(255,255,255,0.92)', color: M.accentStrong,
+                        fontFamily: M.font, fontSize: 10, fontWeight: 600,
+                        letterSpacing: '0.06em', textTransform: 'uppercase',
+                        padding: '3px 7px', borderRadius: 999,
+                      }}>New</div>
+                    )}
+                  </div>
                   <div>
                     <div style={{ fontFamily: M.font, fontSize: 14, fontWeight: 600, color: M.ink1 }}>{c.name}</div>
-                    <div style={{ fontFamily: M.font, fontSize: 12, color: M.ink3, marginTop: 2 }}>{c.count} memories</div>
+                    <div style={{ fontFamily: M.font, fontSize: 12, color: M.ink3, marginTop: 2 }}>{c.count} {c.count === 1 ? 'memory' : 'memories'}</div>
                   </div>
                 </button>
               ))}
@@ -346,10 +521,8 @@ function LibraryGridCell({ memory, onClick, multi, selected }) {
 
 // ─── COLLECTION DETAIL ──────────────────────────────────────────────────
 function CollectionDetailScreen({ collectionId, openMemory, onBack }) {
-  const c = COLLECTIONS.find(c => c.id === collectionId) || COLLECTIONS[0];
-  const items = c.id === 'c-japan'
-    ? MEMORIES.filter(m => ['m-kyoto-hotel','m-jr-pass','m-kaiseki'].includes(m.id))
-    : MEMORIES.slice(0, 4);
+  const c = window.findCollection(collectionId) || COLLECTIONS[0];
+  const items = MEMORIES.filter(m => (m.memberships || []).includes(c.id));
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -359,12 +532,29 @@ function CollectionDetailScreen({ collectionId, openMemory, onBack }) {
         trailing={<IconButton ariaLabel="More"><IconMore size={22} /></IconButton>}
       />
       <div style={{ flex: 1, overflow: 'auto', padding: `0 ${SCREEN_PAD}px ${BOTTOM_SAFE}px` }}>
+        {c.cover && (
+          <div style={{
+            margin: '8px 0 16px', aspectRatio: '16/8', borderRadius: 14,
+            background: c.swatch, position: 'relative', overflow: 'hidden',
+          }}>
+            <img src={c.cover} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} style={{
+              position: 'absolute', inset: 0, width: '100%', height: '100%',
+              objectFit: 'cover', display: 'block',
+            }} />
+          </div>
+        )}
         <h1 style={{ margin: '8px 0 4px', fontFamily: M.font, fontSize: 24, fontWeight: 600, color: M.ink1, letterSpacing: '-0.01em' }}>{c.name}</h1>
-        <div style={{ fontFamily: M.font, fontSize: 13, color: M.ink3, marginBottom: 18 }}>{c.count} memories</div>
+        <div style={{ fontFamily: M.font, fontSize: 13, color: M.ink3, marginBottom: 18 }}>{items.length || c.count} {(items.length || c.count) === 1 ? 'memory' : 'memories'}</div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
-          {items.map(m => <LibraryGridCell key={m.id} memory={m} onClick={() => openMemory(m.id)} />)}
-        </div>
+        {items.length > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+            {items.map(m => <LibraryGridCell key={m.id} memory={m} onClick={() => openMemory(m.id)} />)}
+          </div>
+        ) : (
+          <div style={{ padding: '32px 0', textAlign: 'center', color: M.ink3 }}>
+            <div style={{ fontFamily: M.font, fontSize: 14 }}>This collection is waiting for its first memory.</div>
+          </div>
+        )}
       </div>
     </div>
   );
