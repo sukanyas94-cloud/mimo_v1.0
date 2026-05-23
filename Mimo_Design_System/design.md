@@ -486,10 +486,27 @@ ui_kits/
 
 ## 16. Open questions / known substitutions
 
+## Resolved in V1 (May 2026)
+
+The following open questions were resolved during the V1 design pass. See `designfundamentals/18-DecisionsV1.md` for the full rationale.
+
+- **Share-extension UI.** ✅ Resolved as the V2.5 capture pattern — bottom sheet over the source app with preview, promoted AI suggestion row, and collapsed note affordance. See `14-UXFlows.md § F-001` and Decision 07.
+- **Open original handoff.** ✅ Resolved as the Smart Launcher — native-app primary CTA, "Mimo thinks · other ways" alternatives, recipient suggestion. See `14-UXFlows.md § F-008` and Decision 08.
+- **Save to collection from a memory.** ✅ Resolved as the canonical picker — pre-seeded suggestions, type-to-create, inherited covers, multi-membership. See `14-UXFlows.md § F-009` and Decisions 01, 03, 04, 05, 06.
+- **System understanding as a verb.** ✅ The category chip on Memory Detail is now tappable — one tap saves into a same-named collection. See Decision 02.
+
+## Still open
+
 - **Brand mark.** Wordmark + monogram in `assets/` were designed from scratch. Acceptable as placeholder per user; should be reviewed if brand team has an existing mark.
 - **Notifications.** Source docs don't specify if/how Mimo notifies users. The bell icon in the Home app bar is a placeholder.
 - **Onboarding.** No formal first-run flow specified — the Empty Home state handles UC-015 (first save) at a minimum. Full onboarding is open.
-- **Share-extension UI.** UC-001 / F-001 is the highest-priority capture path but lives outside the app (in the OS share sheet). The in-app receiver UI is still open territory.
+- **Capture cancellation semantics.** Cancel currently discards. Save Before Organize argues for save-anyway. See OQ-01.
+- **Metadata fetch failures.** Currently silent fallback. See OQ-02.
+- **Return path after share-extension save.** Currently returns the user to the source app. See OQ-03.
+- **Send-to-[name] production data source.** Currently parsed from the human-context note. Production should pull from OS recents or Mimo's contact graph. See OQ-04.
+- **Non-URL share payloads.** Plain text, images, PDFs — not yet specified. See OQ-05.
+- **Offline capture.** Queueing behavior not yet defined. See OQ-06.
+- **Multiple URLs in one share.** Not yet specified. See OQ-07.
 
 ---
 

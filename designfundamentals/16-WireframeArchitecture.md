@@ -360,10 +360,10 @@ Associative retrieval
 
 Contains:
 
-- Open Original
-- Share
-- Save To Collection
-- Edit Context
+- Open in [native app] / Open original (primary)
+- Mimo thinks · other ways (browser, send to recipient, copy link)
+- Save to collection (always visible)
+- Edit context
 - Delete
 
 Purpose:
@@ -374,17 +374,43 @@ Post-retrieval actions
 
 ## Primary Actions
 
-- Open Original
+- Open Original (via Smart Launcher)
 - Open Related Memory
+- Save To Collection
 
 ---
 
 ## Secondary Actions
 
-- Share
-- Save To Collection
+- Send to recipient
+- Open in browser (when primary is native app)
+- Copy link
 - Edit Context
 - Delete
+
+---
+
+## Smart Launcher
+
+The primary action surface is a Smart Launcher.
+
+The primary CTA defaults to opening the source's native app when known.
+
+Alternatives appear beneath under "Mimo thinks · other ways" with the recommended path highlighted.
+
+Decision: see 18-DecisionsV1.md § Decision 08.
+
+---
+
+## Save to Collection
+
+A full-width row sits directly beneath the primary Smart Launcher CTA.
+
+The row remains visible at all times.
+
+Memberships persist as chips on the Recognition layer.
+
+Decision: see 18-DecisionsV1.md § Decision 06.
 
 ---
 

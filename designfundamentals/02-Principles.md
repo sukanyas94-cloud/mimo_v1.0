@@ -215,6 +215,53 @@ AI should never override user intent.
 
 ---
 
+# Principle 08B — Balanced Automation
+
+Mimo proposes.
+
+The user picks.
+
+Mimo should make the obvious call so the user does not have to think — but every automated choice should be overridable in the same surface, with no penalty for letting Mimo decide.
+
+This principle extends AI Assists.
+
+AI Assists prevents automation from owning decisions.
+
+Balanced Automation defines what Mimo should automate by default, and how the user can reclaim that choice.
+
+---
+
+## Prefer
+
+System proposes
+
+↓
+
+User confirms or overrides
+
+---
+
+## Over
+
+System decides silently
+
+or
+
+System asks before every action
+
+---
+
+## Examples in V1
+
+- The system-understanding chip on Memory Detail is tappable — one tap saves into a same-named collection.
+- The "Save to collection" picker leads with three suggestions from the memory's category.
+- A new collection inherits the spawning memory's cover automatically.
+- The Smart Launcher highlights the most likely handoff destination.
+
+In every case, the user can override the automation in the same surface — no extra steps, no warning prompts.
+
+---
+
 # Principle 09 — Explainability Builds Trust
 
 Users should understand why the system produced an outcome.

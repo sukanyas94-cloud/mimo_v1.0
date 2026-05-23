@@ -116,6 +116,42 @@ Capture should require minimal interruption.
 
 ---
 
+## Receiver UI (V1 specification)
+
+Mimo's receiver appears as a bottom sheet over the source app.
+
+Structure:
+
+Monogram and title
+
+↓
+
+Preview card (thumbnail + title + source)
+
+↓
+
+Promoted AI suggestion row (one-tap save to inferred collection)
+
+↓
+
+Collapsed note affordance ("Add a note · Optional")
+
+↓
+
+Cancel / Save
+
+The note input is collapsed by default and expands inline on tap.
+
+The AI suggestion row uses the system tint and provides the fastest path to organized capture.
+
+After save, a transient toast confirms the capture and offers a View action.
+
+The user remains in the source app.
+
+Decision: see 18-DecisionsV1.md § Decision 07.
+
+---
+
 # F-002 — Save Link Manually
 
 ## Goal
@@ -588,6 +624,28 @@ Opening original content is a primary action.
 
 ---
 
+## Handoff UI (V1 specification)
+
+The Memory Detail action surface uses a Smart Launcher.
+
+Primary CTA opens the native source app when the source matches a known app.
+
+When the source does not match a known app, the primary CTA reads "Open original" and falls back to the browser.
+
+Below the primary CTA, an alternatives group surfaces under the label "Mimo thinks · other ways":
+
+- Open in browser
+- Send to [recipient]
+- Copy link
+
+The recommended alternative is highlighted with the accent tint.
+
+Recipient parsing scans the human context for proper-noun matches against a small known set.
+
+Decision: see 18-DecisionsV1.md § Decision 08.
+
+---
+
 # F-009 — Create Collection From Memory Card
 
 ## Goal
@@ -639,6 +697,50 @@ Collection Updated
 ## Design Notes
 
 Collections remain optional.
+
+---
+
+## Picker UI (V1 specification)
+
+The "Save to collection" sheet leads with three suggested collection names inferred from the memory's system understanding.
+
+Order:
+
+Recommended (specific) → Broader (category) → Tighter (moment)
+
+Suggestions disappear when the user types — the typed query takes precedence.
+
+Any unmatched query becomes a Create row.
+
+No separate "+ New" modal.
+
+No required description.
+
+New collections inherit the cover from the spawning memory.
+
+Memberships are multi-valued.
+
+A memory may belong to any number of collections at once.
+
+Membership appears as a chip on the Recognition layer of Memory Detail.
+
+Tapping the chip opens the corresponding Collection Detail.
+
+Removal happens by re-opening the picker and untoggling.
+
+Decisions: see 18-DecisionsV1.md § Decisions 01, 03, 04, 05, 06.
+
+---
+
+## One-tap path via system understanding
+
+When a memory has a system-understanding category, the category chip on Memory Detail is tappable.
+
+Tap saves the memory into a same-named collection — creating it if needed.
+
+This is the fastest organizational path in the product.
+
+Decision: see 18-DecisionsV1.md § Decision 02.
 
 ---
 
