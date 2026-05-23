@@ -1,0 +1,60 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Context Blocks</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .block { border-radius: 12px; padding: 14px 16px; border: 1px solid transparent; }
+  .human   { background: #F5EBD9; border-color: #E8D7BB; }
+  .system  { background: #E9EEF3; border-color: #D2DCE7; }
+  .related { background: #FFFFFF; border: 1px solid #ECEAE3; box-shadow: 0 1px 2px rgba(20,20,18,0.04); padding: 12px; }
+  .warn    { background: #F5E9D6; border-color: #A66A24; display: flex; gap: 10px; align-items: flex-start; }
+  .label   { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px; }
+  .ic      { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .human .label  { color: #6B4E1F; }
+  .system .label { color: #34526E; }
+  .body          { font-size: 14px; line-height: 1.45; }
+  .human .body   { color: #4A371A; }
+  .system .body  { color: #1F3650; }
+  .related-row   { display: flex; gap: 12px; align-items: center; }
+  .thumb         { width: 56px; height: 56px; border-radius: 8px; background: linear-gradient(135deg,#C9D5B8,#7C9A6F); flex-shrink: 0; }
+  .related-title { font-size: 14px; font-weight: 600; color: #1A1A18; }
+  .related-why   { font-size: 12px; color: #8C8B83; margin-top: 2px; line-height: 1.4; }
+  .warn .wi { color: #A66A24; margin-top: 2px; }
+  .warn .wi svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .warn .t { font-size: 13px; font-weight: 600; color: #A66A24; }
+  .warn .b { font-size: 13px; color: #5C5B56; margin-top: 2px; line-height: 1.4; }
+</style>
+</head><body>
+  <div class="block human">
+    <div class="label">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/></svg>
+      You noted
+    </div>
+    <div class="body">Rahul recommended this. Try during the Japan trip — quiet ryokans near Yasaka Shrine.</div>
+  </div>
+  <div class="block system">
+    <div class="label">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+      Mimo thinks
+    </div>
+    <div class="body">Travel reference · Kyoto · Likely useful when planning a Spring 2026 trip.</div>
+  </div>
+  <div class="block related">
+    <div class="related-row">
+      <div class="thumb"></div>
+      <div>
+        <div class="related-title">JR Pass for Kansai — 5-day flexi</div>
+        <div class="related-why">Related because both reference Japan travel.</div>
+      </div>
+    </div>
+  </div>
+  <div class="block warn">
+    <div class="wi">
+      <svg viewBox="0 0 24 24"><path d="M21.73 18 13.73 3.99a2 2 0 0 0-3.46 0L2.27 18a2 2 0 0 0 1.73 3h16a2 2 0 0 0 1.73-3z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div>
+      <div class="t">Original page is no longer reachable.</div>
+      <div class="b">Your memory is still safe — context and understanding are preserved here.</div>
+    </div>
+  </div>
+</body></html>

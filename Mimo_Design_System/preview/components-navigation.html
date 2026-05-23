@@ -1,0 +1,51 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Navigation</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; align-items: stretch; }
+  .frame { width: 340px; border: 1px solid #ECEAE3; border-radius: 14px; background: #FFFFFF; overflow: hidden; }
+  .appbar { display: flex; align-items: center; justify-content: space-between; padding: 0 8px; height: 56px; background: #FFFFFF; border-bottom: 1px solid #ECEAE3; }
+  .appbar .title { font-size: 17px; font-weight: 600; color: #1A1A18; }
+  .iconbtn { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; color: #1A1A18; border: 0; background: transparent; cursor: pointer; }
+  .iconbtn:hover { background: #F5F4EF; }
+  .ic { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .ic.s { width: 20px; height: 20px; }
+  .bottomnav { display: flex; height: 56px; border-top: 1px solid #ECEAE3; background: #FFFFFF; }
+  .navitem { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #8C8B83; font-size: 11px; font-weight: 500; }
+  .navitem.active { color: #1A1A18; font-weight: 600; }
+  .navitem.active .ic { stroke-width: 1.9; }
+  .label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+</style>
+</head><body>
+  <div>
+    <div class="label" style="margin-bottom:8px">Top app bar</div>
+    <div class="frame">
+      <div class="appbar">
+        <div style="display:flex;align-items:center;gap:4px">
+          <button class="iconbtn"><svg class="ic" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+          <span class="title">Memory</span>
+        </div>
+        <button class="iconbtn"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="label" style="margin-bottom:8px">Bottom navigation</div>
+    <div class="frame">
+      <div class="bottomnav">
+        <div class="navitem active">
+          <svg class="ic s" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          Home
+        </div>
+        <div class="navitem">
+          <svg class="ic s" viewBox="0 0 24 24"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>
+          Library
+        </div>
+        <div class="navitem">
+          <svg class="ic s" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </div>
+      </div>
+    </div>
+  </div>
+</body></html>

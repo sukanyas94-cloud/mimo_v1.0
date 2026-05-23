@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Colors · Accent & Context</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 20px 24px; }
+  .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .sw { display: flex; flex-direction: column; gap: 6px; }
+  .chip { aspect-ratio: 1.6 / 1; border-radius: 10px; border: 1px solid var(--border); display: flex; align-items: flex-end; padding: 8px 10px; }
+  .chip .lbl { font-size: 11px; font-weight: 500; }
+  .name { font-size: 12px; font-weight: 600; color: var(--ink-1); }
+  .hex  { font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .group { margin-bottom: 18px; }
+  .group-name { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 10px; font-weight: 600; }
+</style>
+</head><body>
+  <div class="group">
+    <div class="group-name">Brand accent</div>
+    <div class="row">
+      <div class="sw"><div class="chip" style="background:#8B5A3C; color:#fff"><span class="lbl">accent</span></div><div class="name">accent</div><div class="hex">#8B5A3C</div></div>
+      <div class="sw"><div class="chip" style="background:#6F4429; color:#fff"><span class="lbl">strong</span></div><div class="name">accent-strong</div><div class="hex">#6F4429</div></div>
+      <div class="sw"><div class="chip" style="background:#F2E6DA; color:#6F4429"><span class="lbl">soft</span></div><div class="name">accent-soft</div><div class="hex">#F2E6DA</div></div>
+    </div>
+  </div>
+  <div class="group">
+    <div class="group-name">Human context (user-authored)</div>
+    <div class="row">
+      <div class="sw"><div class="chip" style="background:#F5EBD9; color:#6B4E1F; border-color:#E8D7BB"><span class="lbl">You noted</span></div><div class="name">human-bg</div><div class="hex">#F5EBD9</div></div>
+      <div class="sw"><div class="chip" style="background:#E8D7BB"></div><div class="name">human-border</div><div class="hex">#E8D7BB</div></div>
+      <div class="sw"><div class="chip" style="background:#6B4E1F; color:#F5EBD9"><span class="lbl">ink</span></div><div class="name">human-ink</div><div class="hex">#6B4E1F</div></div>
+    </div>
+  </div>
+  <div class="group">
+    <div class="group-name">System understanding (AI-inferred)</div>
+    <div class="row">
+      <div class="sw"><div class="chip" style="background:#E9EEF3; color:#34526E; border-color:#D2DCE7"><span class="lbl">Mimo thinks</span></div><div class="name">system-bg</div><div class="hex">#E9EEF3</div></div>
+      <div class="sw"><div class="chip" style="background:#D2DCE7"></div><div class="name">system-border</div><div class="hex">#D2DCE7</div></div>
+      <div class="sw"><div class="chip" style="background:#34526E; color:#E9EEF3"><span class="lbl">ink</span></div><div class="name">system-ink</div><div class="hex">#34526E</div></div>
+    </div>
+  </div>
+</body></html>

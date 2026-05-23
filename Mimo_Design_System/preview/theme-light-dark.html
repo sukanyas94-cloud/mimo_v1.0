@@ -1,0 +1,69 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Theme · Light & Dark</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 0; margin: 0; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .pane { padding: 20px 22px; min-height: 220px; box-sizing: border-box; }
+  .pane.light { background: #FFFFFF; color: #1A1A18; }
+  .pane.dark  { background: #121211; color: #F2F0E9; }
+  .label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.6; margin-bottom: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .label svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .card { padding: 12px 14px; border-radius: 12px; border: 1px solid; display: flex; gap: 12px; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .light .card { background: #FFFFFF; border-color: #ECEAE3; }
+  .dark  .card { background: #1B1B19; border-color: #2A2926; box-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+  .thumb { width: 48px; height: 48px; border-radius: 8px; background: linear-gradient(135deg,#E6DCC8,#C7B595); flex-shrink: 0; }
+  .title { font-size: 14px; font-weight: 600; }
+  .meta  { font-size: 12px; opacity: 0.55; margin-top: 2px; }
+  .chips { display: flex; gap: 6px; margin-top: 12px; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+  .chip svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .light .chip.human  { background: #F5EBD9; color: #6B4E1F; border: 1px solid #E8D7BB; }
+  .light .chip.system { background: #E9EEF3; color: #34526E; border: 1px solid #D2DCE7; }
+  .dark  .chip.human  { background: #3A2D1A; color: #F0D9A8; border: 1px solid #5A4727; }
+  .dark  .chip.system { background: #1F2E40; color: #B5CCE0; border: 1px solid #2F4663; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 8px; font-size: 13px; font-weight: 500; border: 0; margin-top: 14px; cursor: pointer; }
+  .btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .light .btn { background: #1A1A18; color: #FFFFFF; }
+  .dark  .btn { background: #F2F0E9; color: #1A1A18; }
+</style>
+</head><body>
+  <div class="row">
+    <div class="pane light">
+      <div class="label">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        Light
+      </div>
+      <div class="card">
+        <div class="thumb"></div>
+        <div>
+          <div class="title">A weekend in Higashiyama, Kyoto</div>
+          <div class="meta">instagram.com · 14 Apr</div>
+        </div>
+      </div>
+      <div class="chips">
+        <span class="chip human"><svg viewBox="0 0 24 24"><path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/></svg>You noted</span>
+        <span class="chip system"><svg viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>Travel reference</span>
+      </div>
+      <button class="btn"><svg viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Open original</button>
+    </div>
+    <div class="pane dark">
+      <div class="label">
+        <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></svg>
+        Dark
+      </div>
+      <div class="card">
+        <div class="thumb"></div>
+        <div>
+          <div class="title">A weekend in Higashiyama, Kyoto</div>
+          <div class="meta">instagram.com · 14 Apr</div>
+        </div>
+      </div>
+      <div class="chips">
+        <span class="chip human"><svg viewBox="0 0 24 24"><path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/></svg>You noted</span>
+        <span class="chip system"><svg viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>Travel reference</span>
+      </div>
+      <button class="btn"><svg viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Open original</button>
+    </div>
+  </div>
+</body></html>

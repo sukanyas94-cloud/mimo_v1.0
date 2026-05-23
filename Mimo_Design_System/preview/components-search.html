@@ -1,0 +1,41 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Search Field</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .row { display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 16px; }
+  .label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+  .field { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; background: #FFFFFF; border: 1px solid #ECEAE3; border-radius: 12px; transition: border-color 160ms cubic-bezier(0.2,0,0.2,1); }
+  .field input { flex: 1; border: 0; outline: none; background: transparent; font-family: var(--font-sans); font-size: 15px; color: var(--ink-1); }
+  .field input::placeholder { color: var(--ink-3); }
+  .ic { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; color: var(--ink-3); flex-shrink: 0; }
+  .field.focus { border-color: #8B5A3C; box-shadow: 0 0 0 3px rgba(139,90,60,0.12); }
+  .field.focus .ic { color: #8B5A3C; }
+  .field.url   { border-color: #D2DCE7; background: #E9EEF3; }
+  .field.url .ic { color: #34526E; }
+  .url-chip { font-size: 11px; font-weight: 600; color: #34526E; background: #FFFFFF; padding: 5px 10px; border-radius: 999px; border: 1px solid #D2DCE7; }
+</style>
+</head><body>
+  <div class="row">
+    <div class="label">Default</div>
+    <div class="field">
+      <svg class="ic" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+      <input placeholder="Search or paste a link">
+    </div>
+  </div>
+  <div class="row">
+    <div class="label">Focused</div>
+    <div class="field focus">
+      <svg class="ic" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+      <input value="kyoto hotel" autofocus>
+    </div>
+  </div>
+  <div class="row">
+    <div class="label">URL detected</div>
+    <div class="field url">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      <input value="https://www.tablethotels.com/park-hyatt-kyoto">
+      <span class="url-chip">Save link</span>
+    </div>
+  </div>
+</body></html>

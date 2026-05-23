@@ -1,0 +1,21 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Colors · Status</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 20px 24px; }
+  .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .sw { display: flex; flex-direction: column; gap: 6px; }
+  .chip { aspect-ratio: 1.6 / 1; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--border); }
+  .chip .top { font-size: 12px; font-weight: 600; }
+  .chip .ic  { width: 16px; height: 16px; border-radius: 999px; }
+  .name { font-size: 12px; font-weight: 600; color: var(--ink-1); }
+  .hex  { font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+</style>
+</head><body>
+  <div class="row">
+    <div class="sw"><div class="chip" style="background:#E8EFE7; color:#4F7A52; border-color:#D2E0D3"><span class="top">Success</span><div class="ic" style="background:#4F7A52"></div></div><div class="name">success</div><div class="hex">#4F7A52</div></div>
+    <div class="sw"><div class="chip" style="background:#F5E9D6; color:#A66A24; border-color:#E8D2A8"><span class="top">Warning</span><div class="ic" style="background:#A66A24"></div></div><div class="name">warning</div><div class="hex">#A66A24</div></div>
+    <div class="sw"><div class="chip" style="background:#F4E1DD; color:#A14437; border-color:#E8C7C1"><span class="top">Danger</span><div class="ic" style="background:#A14437"></div></div><div class="name">danger</div><div class="hex">#A14437</div></div>
+    <div class="sw"><div class="chip" style="background:#E3EBF2; color:#426D8E; border-color:#CCDAE6"><span class="top">Info</span><div class="ic" style="background:#426D8E"></div></div><div class="name">info</div><div class="hex">#426D8E</div></div>
+  </div>
+</body></html>
